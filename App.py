@@ -6,65 +6,70 @@ import plotly_express as px
 
 # %% Cargando DB
 df = pd.read_csv("notebooks/StudentsPerformance.csv")
-lng = pd.read_csv("lng.csv")
-lng = lng.set_index('message')
+
+# %%
+# Ajustes
+df = df[['race/ethnicity', 'math', 'reading', 'writing']]
 
 # %% Variables
-Lenguage: str = "English"
-Histogram: bool = False
-Scatter: bool = False
-chart_type: str = ""
-
-# %%
-# funcion para simplificar mensajes
-
-
-def msg(message: str):
-    return lng.loc[message, Lenguage]
-
-
-# %% Lenguage
-esp, eng = st.columns(2)
-with eng:
-    btn_eng = st.button('English')
-with esp:
-    btn_esp = st.button('Español')
-
-if btn_esp:
-    Lenguage = "Espanol"
-if btn_eng:
-    Lenguage = "English"
+tdf = df.copy()  # Copia del dataframe para actualizar con los botones
 
 # %% Encabezado
-st.header(msg('titulo'))
-st.subheader(str(msg('mainmsg')))
+st.header("Students Performance")
+st.subheader("Exploratory Data Analysis")
 st.write("___")
-st.write(msg('tabla'))
+st.write("Dataset Sample")
 
 # %%
-# Sample
-st.dataframe(df)
+# Separacion
+tabla, checkbox = st.columns([5, 1])
+
+# Crear los checkboxes
+with checkbox:
+    gropu_a = st.checkbox("Group A", value=True)
+    gropu_b = st.checkbox("Group B", value=True)
+    gropu_c = st.checkbox("Group C", value=True)
+    gropu_d = st.checkbox("Group D", value=True)
+    gropu_e = st.checkbox("Group E", value=True)
+
+# Función para actualizar el DataFrame basado en los checkboxes seleccionados
 
 
-# %%
-# Botón para histograma
-col1, col2, col3 = st.columns(3)
-with col1:
-    btn_hist_1 = st.button(msg('btn_hist_mat'))
-with col2:
-    btn_hist_2 = st.button(msg('btn_hist_lec'))
-with col3:
-    btn_hist_3 = st.button(msg('btn_hist_esc'))
+def update_df():
+    selection = []
+    if gropu_a:
+        selection.append('group A')
+    if gropu_b:
+        selection.append('group B')
+    if gropu_c:
+        selection.append('group C')
+    if gropu_d:
+        selection.append('group D')
+    if gropu_e:
+        selection.append('group E')
 
-if btn_hist_1:
-    # crear un histograma
-    fig = px.histogram(df, x='math_score')
+    # Filtrar el DataFrame según la selección de checkboxes
+    tdf = df[df['race/ethnicity'].isin(selection)]
+
+    return tdf
+
+
+# Actualizar el DataFrame filtrado
+tdf = update_df()
+
+# Mostrar el DataFrame filtrado en la columna 'tabla'
+with tabla:
+    st.dataframe(tdf.sample(5))
+
+hist, scat = st.columns(2)
+with hist:
+    # Crear y mostrar el histograma
+    fig = px.histogram(tdf, x=["math", "reading", "writing"])
     st.plotly_chart(fig, use_container_width=True)
-if btn_hist_2:
-    # crear un histograma
-    fig = px.histogram(df, x='reading_score')
+with scat:
+    # Crear y mostrar el scatter plot
+    fig = px.scatter_3d(tdf, x="math", y="reading",
+                        z="writing", opacity=0.25)
     st.plotly_chart(fig, use_container_width=True)
-if btn_hist_3:
-    # crear un histograma
-    fig = px.histogram(df, x='writing_score')
-    st.plotly_chart(fig, use_container_width=True)
+
+st.write("___")

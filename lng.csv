@@ -1,10 +1,1 @@
-message,Espanol,English
-titulo,Desempeño de los Estudiantes,Students Performance
-mainmsg,Analisis Exploratorio de Datos,Exploratory Data Analysis
-tabla,Muestra del Conjunto de Datos,Dataset Sample
-hist,Trazar Histograma,Build Histogram
-btn_hist_mat,Matematicas,Math
-btn_hist_lec,Lectura,Reading
-btn_hist_esc,Escritura,Writing
-btn_disp,Dispersion,Scatter
-select_ct,Elige tipo de grafico,Select Chart Type
+
