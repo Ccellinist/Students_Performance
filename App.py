@@ -1,31 +1,44 @@
 # %%
-# Importar Librerias
+# MODULE DOCSTRING
+"""this is the main code for the web page"""
+# %%
+# IMPORTAR LIBRERIAS
 import pandas as pd
 import streamlit as st
 import plotly_express as px
 
-# %% Cargando DB
+# %%
+# CARGA DATABASE
 df = pd.read_csv("notebooks/StudentsPerformance.csv")
 
 # %%
-# Ajustes
+# AJUSTES
+# Toma solo las columnas más importantes
 df = df[['gender', 'race/ethnicity',
          'lunch', 'preparation course', 'math', 'reading', 'writing']]
 
-# %% Variables
+# %%
+# VARIABLES
+# Copia del dataframe para actualizar con los botones
 tdf = df.copy()  # Copia del dataframe para actualizar con los botones
 
-# %% Encabezado
+# %%
+# ENCABEZADO
+# Titulo
 st.header("Students Performance")
+# Subtitulo
 st.subheader("Exploratory Data Analysis")
+# Linea divisora
 st.write("___")
+# Texto demostrativo
 st.write("Dataset Sample")
 
 # %%
-# Separacion
+# MUESTRA DATASET
 st.dataframe(df.sample(5))
 
-# Crear los checkboxes
+# %%
+# Crear los checkbox en una sola fila horizontal
 c1, c2, c3, c4, c5 = st.columns(5)
 with c1:
     gropu_a = st.checkbox("Group A", value=True)
@@ -38,10 +51,13 @@ with c4:
 with c5:
     gropu_e = st.checkbox("Group E", value=True)
 
-# Función para actualizar el DataFrame basado en los checkboxes seleccionados
+# %%
+# FUNCION PERSONALIZADA
 
 
 def update_df():
+    """this function updates the dataframe viewed in the main page"""
+
     selection = []
     if gropu_a:
         selection.append('group A')
@@ -55,33 +71,34 @@ def update_df():
         selection.append('group E')
 
     # Filtrar el DataFrame según la selección de checkboxes
-    tdf = df[df['race/ethnicity'].isin(selection)]
+    temporal_df = df[df['race/ethnicity'].isin(selection)]
 
-    return tdf
+    return temporal_df
 
 
+# %%
+# ACTUALIZAR
 # Actualizar el DataFrame filtrado
 tdf = update_df()
 
-# Mostrar el DataFrame filtrado en la columna 'tabla'
-
-
-# Crear y mostrar el histograma
+# %%
+# MUESTRA EL HISTOGRAMA
 fig = px.histogram(tdf, x=["math", "reading", "writing"])
 st.plotly_chart(fig, use_container_width=True)
 
+# Termina el histograma con una linea divisora
 st.write("___")
 
+# %%
+# MUESTRA LOS DIAGRAMAS DE DISPERSION
 st.write("How does the lunch affect the students results?")
 
 cl1, cl2 = st.columns(2)
 with cl1:
     tdf2 = df[df["lunch"] == 'standard']
-    # Crear y mostrar el scatter plot
     fig = px.scatter_3d(tdf2, x="math", y="reading", z="writing", opacity=0.25)
     st.plotly_chart(fig, use_container_width=True)
 with cl2:
     tdf2 = df[df["lunch"] == 'free/reduced']
-    # Crear y mostrar el scatter plot
     fig = px.scatter_3d(tdf2, x="math", y="reading", z="writing", opacity=0.25)
     st.plotly_chart(fig, use_container_width=True)
