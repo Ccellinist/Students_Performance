@@ -9,7 +9,8 @@ df = pd.read_csv("notebooks/StudentsPerformance.csv")
 
 # %%
 # Ajustes
-df = df[['race/ethnicity', 'math', 'reading', 'writing']]
+df = df[['gender', 'race/ethnicity',
+         'lunch', 'preparation course', 'math', 'reading', 'writing']]
 
 # %% Variables
 tdf = df.copy()  # Copia del dataframe para actualizar con los botones
@@ -22,14 +23,19 @@ st.write("Dataset Sample")
 
 # %%
 # Separacion
-tabla, checkbox = st.columns([5, 1])
+st.dataframe(df.sample(5))
 
 # Crear los checkboxes
-with checkbox:
+c1, c2, c3, c4, c5 = st.columns(5)
+with c1:
     gropu_a = st.checkbox("Group A", value=True)
+with c2:
     gropu_b = st.checkbox("Group B", value=True)
+with c3:
     gropu_c = st.checkbox("Group C", value=True)
+with c4:
     gropu_d = st.checkbox("Group D", value=True)
+with c5:
     gropu_e = st.checkbox("Group E", value=True)
 
 # Función para actualizar el DataFrame basado en los checkboxes seleccionados
@@ -58,18 +64,39 @@ def update_df():
 tdf = update_df()
 
 # Mostrar el DataFrame filtrado en la columna 'tabla'
-with tabla:
-    st.dataframe(tdf.sample(5))
 
-hist, scat = st.columns(2)
-with hist:
-    # Crear y mostrar el histograma
-    fig = px.histogram(tdf, x=["math", "reading", "writing"])
-    st.plotly_chart(fig, use_container_width=True)
-with scat:
-    # Crear y mostrar el scatter plot
-    fig = px.scatter_3d(tdf, x="math", y="reading",
-                        z="writing", opacity=0.25)
-    st.plotly_chart(fig, use_container_width=True)
+
+# Crear y mostrar el histograma
+fig = px.histogram(tdf, x=["math", "reading", "writing"])
+st.plotly_chart(fig, use_container_width=True)
 
 st.write("___")
+
+cl1, cl2 = st.columns(2)
+with cl1:
+    standar = st.button('Standard')
+with cl2:
+    free_red = st.button('Free / Reduced')
+
+if standar:
+    tdf2 = df[df["lunch"] == 'standard']
+    # Crear y mostrar el scatter plot
+    fig = px.scatter_3d(tdf2, x="math", y="reading", z="writing", opacity=0.25)
+    fig.update_layout(
+        scene_camera=dict(
+            # Ajusta estos valores para cambiar la vista
+            eye=dict(x=1.5, y=1.5, z=1.5)
+        )
+    )
+    st.plotly_chart(fig, use_container_width=True)
+if free_red:
+    tdf2 = df[df["lunch"] == 'free/reduced']
+    # Crear y mostrar el scatter plot
+    fig = px.scatter_3d(tdf2, x="math", y="reading", z="writing", opacity=0.25)
+    fig.update_layout(
+        scene_camera=dict(
+            # Ajusta estos valores para cambiar la vista
+            eye=dict(x=1.5, y=1.5, z=1.5)
+        )
+    )
+    st.plotly_chart(fig, use_container_width=True)
