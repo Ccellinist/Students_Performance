@@ -72,31 +72,16 @@ st.plotly_chart(fig, use_container_width=True)
 
 st.write("___")
 
+st.write("How does the lunch affect the students results?")
+
 cl1, cl2 = st.columns(2)
 with cl1:
-    standar = st.button('Standard')
-with cl2:
-    free_red = st.button('Free / Reduced')
-
-if standar:
     tdf2 = df[df["lunch"] == 'standard']
     # Crear y mostrar el scatter plot
     fig = px.scatter_3d(tdf2, x="math", y="reading", z="writing", opacity=0.25)
-    fig.update_layout(
-        scene_camera=dict(
-            # Ajusta estos valores para cambiar la vista
-            eye=dict(x=1.5, y=1.5, z=1.5)
-        )
-    )
     st.plotly_chart(fig, use_container_width=True)
-if free_red:
+with cl2:
     tdf2 = df[df["lunch"] == 'free/reduced']
     # Crear y mostrar el scatter plot
     fig = px.scatter_3d(tdf2, x="math", y="reading", z="writing", opacity=0.25)
-    fig.update_layout(
-        scene_camera=dict(
-            # Ajusta estos valores para cambiar la vista
-            eye=dict(x=1.5, y=1.5, z=1.5)
-        )
-    )
     st.plotly_chart(fig, use_container_width=True)
